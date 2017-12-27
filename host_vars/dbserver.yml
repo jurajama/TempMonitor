@@ -1,0 +1,31 @@
+---
+az_vm_name: dbserver
+
+# For flavor details and pricing see:
+# https://azure.microsoft.com/en-gb/pricing/details/virtual-machines/linux/
+az_vm_size: Standard_A1  # 1 vCPU, 1.75 GB RAM
+#az_vm_size: Standard_A2  # 2 vCPU, 3.50 GB RAM
+
+az_pub_ip_name: "dbserverIP"
+
+az_sec_groups:
+  - name: 'AllowSSH'
+    protocol: Tcp
+    destination_port_range: 22
+    access: Allow
+    priority: 101
+    direction: Inbound
+
+  - name: 'InfluxDB'
+    protocol: Tcp
+    destination_port_range: "{{ influxdb_tcp_port }}"
+    access: Allow
+    priority: 102
+    direction: Inbound
+
+  - name: 'Grafana'
+    protocol: Tcp
+    destination_port_range: "{{ grafana_tcp_port }}"
+    access: Allow
+    priority: 103
+    direction: Inbound

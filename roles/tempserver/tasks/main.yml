@@ -1,0 +1,28 @@
+---
+- name: Enable IP forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: 1
+
+# docker-py is needed for managing Docker containers with Ansible
+- name: Install docker-py
+  package:
+    name: python-docker-py
+    state: present
+
+# Docker and firewalld mess in CentOS 7, so let's disable it.
+# https://sanenthusiast.com/docker-and-firewalld-mess-in-centos-7/
+# Bug report: https://github.com/docker/docker/issues/16137
+- name: Disable firewalld
+  systemd:
+    name: firewalld
+    state: stopped
+    enabled: no
+  register: result
+  failed_when: result|failed and not 'Could not find the requested service' in result.msg
+
+- import_tasks: influxdb.yml
+  tags: [influxdb]
+
+- import_tasks: grafana.yml
+  tags: [grafana]

@@ -1,0 +1,32 @@
+---
+az_net_cidr:    10.20.30.0/24
+az_net_name:    MyNetwork
+az_subnet_name: MySubnet
+az_rg_name:     MyResourceGroup
+az_sec_group:   MySecurityGroup
+az_pub_ip_name: MyPublicIP
+az_nic_name:    nic001
+az_private_ip:  10.20.30.10
+az_vm_name:     testvm001
+az_vm_size:     Standard_A0
+az_managed_disk_type: Standard_LRS
+az_admin_username: centos
+
+# You must override this with your real SSH public key:
+az_ssh_public_key: "ssh-rsa DummyKeyContent"
+
+az_location: northeurope
+
+az_sec_groups:
+  - name: 'AllowSSH'
+    protocol: Tcp
+    destination_port_range: 22
+    access: Allow
+    priority: 101
+    direction: Inbound
+
+az_vm_image:
+  offer: CentOS
+  publisher: OpenLogic
+  sku: '7.3'
+  version: latest

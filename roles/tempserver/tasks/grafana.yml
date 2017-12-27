@@ -1,0 +1,65 @@
+---
+- name: Start grafana container
+  docker_container:
+    name: grafana_gui
+    image: grafana/grafana
+    restart_policy: always
+    env:
+      GF_SECURITY_ADMIN_PASSWORD: "{{ grafana_admin_password }}"
+    published_ports:
+      - "{{ grafana_tcp_port }}:{{ grafana_tcp_port }}"
+
+- name: Wait for Grafana to start up
+  wait_for:
+    port: "{{ grafana_tcp_port }}"
+
+# Grafana tasks are from
+# https://github.com/manala/ansible-roles/blob/master/manala.grafana/tasks/datasources.yml
+# Datasource API reference: http://docs.grafana.org/http_api/data_source/
+
+# Get existing datasources
+- name: datasources > Retrieve datasources
+  uri:
+    url:              "{{ grafana_api_url }}/api/datasources"
+    force_basic_auth: true
+    user:             "{{ grafana_admin_user }}"
+    password:         "{{ grafana_admin_password }}"
+    return_content:   true
+  register: _manala_grafana_datasources_output
+  retries: 3
+  delay: 5
+  until: _manala_grafana_datasources_output | succeeded
+
+# Create non existing datasources
+- name: datasources > Create datasources
+  register: _manala_grafana_datasources_create_output
+  failed_when: "'Datasource added' not in _manala_grafana_datasources_create_output|to_json"
+  uri:
+    url:                  "{{ grafana_api_url }}/api/datasources"
+    method:               POST
+    body:                 '{{ item|to_json }}'
+    force_basic_auth:     true
+    user:                 "{{ grafana_admin_user }}"
+    password:             "{{ grafana_admin_password }}"
+    status_code:          200
+    headers:
+      Content-Type: application/json
+  with_items: "{{ grafana_datasources }}"
+  when: item.name not in _manala_grafana_datasources_output.json|map(attribute='name')|list
+
+# Dashboard API reference: http://docs.grafana.org/http_api/dashboard/
+# Body has specific format described in API reference.
+# The dashboard file itself referred by item.template has been exported from Grafana GUI.
+- name: dashboards > Import dashboards
+  register: _manala_grafana_dashboards_import_output
+  uri:
+    url:              "{{ grafana_api_url }}/api/dashboards/import"
+    method:           POST
+    body:             "{{ { 'dashboard': lookup('file', item.template)|from_json, 'overwrite': item.overwrite|default(true), 'inputs': item.inputs|default([]) }|to_json }}"
+    force_basic_auth: true
+    user:             "{{ grafana_admin_user }}"
+    password:         "{{ grafana_admin_password }}"
+    status_code:      200
+    headers:
+      Content-Type: application/json
+  with_items: "{{ grafana_dashboards }}"

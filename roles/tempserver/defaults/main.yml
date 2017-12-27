@@ -1,0 +1,37 @@
+---
+# Name of InfluxDB database where to store the data
+influx_db_name: raspidata
+
+# Override these default credentials
+influxdb_admin_username: admin
+influxdb_admin_password: secret
+influxdb_raspi_username: raspi
+influxdb_raspi_password: secret
+
+grafana_admin_user: admin
+grafana_admin_password: secret
+
+grafana_tcp_port: 3000
+influxdb_tcp_port: 8086
+
+grafana_api_url: "http://{{ ansible_default_ipv4.address }}:{{ grafana_tcp_port }}"
+
+grafana_datasources:
+  - name:      raspitemp
+    type:      influxdb
+    isDefault: true
+    access:    proxy
+    basicAuth: false
+    url:       "http://{{ ansible_default_ipv4.address }}:{{ influxdb_tcp_port }}"
+    database:  "{{ influx_db_name }}"
+    user:      "{{ influxdb_admin_username }}"
+    password:  "{{ influxdb_admin_password }}"
+
+grafana_dashboards:
+  - template: "files/raspi_dashboard.json"
+    inputs:
+      - name:     "DS_RASPITEMP"
+        pluginId: "influxdb"
+        type:     "datasource"
+        value:    "raspitemp"
+    overwrite: true

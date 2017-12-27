@@ -1,0 +1,61 @@
+---
+- name: Install EPEL repository
+  yum:
+    name: epel-release
+
+- name: Install pip
+  yum:
+    name: python-pip
+
+- name: Install python packages
+  pip:
+    name: influxdb
+
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+  with_items:
+    - "/opt/influxdb/data"
+    - "/opt/influxdb/config"
+
+- name: Copy influxdb configuration file
+  template:
+    src: "templates/influxdb.conf.j2"
+    dest: "/opt/influxdb/config/influxdb.conf"
+
+- name: Start influxdb container
+  docker_container:
+    name: influxdb_database
+    image: influxdb
+    command: "-config /etc/influxdb/influxdb.conf"
+    restart_policy: always
+    volumes:
+      - "/opt/influxdb/data:/var/lib/influxdb"
+      - "/opt/influxdb/config/influxdb.conf:/etc/influxdb/influxdb.conf:ro"
+    ports:
+      - "{{ influxdb_tcp_port }}:{{ influxdb_tcp_port }}"
+
+# After the admin user has been created the following logins must always use that user
+# and running this command fails.
+- name: Create influxdb admin user
+  command: "docker exec influxdb_database influx -execute \"CREATE USER {{ influxdb_admin_username }} WITH PASSWORD '{{ influxdb_admin_password }}' WITH ALL PRIVILEGES\""
+  register: result
+  failed_when: result|failed and not 'unable to parse authentication credentials' in result.stdout
+
+- name: Create database
+  influxdb_database:
+    hostname: "{{ ansible_host }}"
+    database_name: "{{ influx_db_name }}"
+    username: "{{ influxdb_admin_username }}"
+    password: "{{ influxdb_admin_password }}"
+
+# This command does not fail even if user already exists
+- name: Create influxdb raspi user
+  command: "docker exec influxdb_database influx -username {{ influxdb_admin_username }} -password {{ influxdb_admin_password }} -execute \"CREATE USER {{ influxdb_raspi_username }} WITH PASSWORD '{{ influxdb_raspi_password }}'\""
+
+- name: Grant access rights to database
+  command: "docker exec influxdb_database influx -username {{ influxdb_admin_username }} -password {{ influxdb_admin_password }} -execute \"GRANT ALL ON {{ influx_db_name }} to {{ influxdb_raspi_username }}\""
+
+# TODO: Create influxdb read-only users

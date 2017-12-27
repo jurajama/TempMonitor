@@ -1,0 +1,5 @@
+---
+influxdb_tcp_port: 8086
+grafana_tcp_port: 3000
+
+az_rg_name: TempMonitor

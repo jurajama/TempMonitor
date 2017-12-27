@@ -1,0 +1,65 @@
+---
+- name: Create resource group
+  azure_rm_resourcegroup:
+    name: "{{ az_rg_name }}"
+    location: "{{ az_location }}"
+
+- name: Create virtual network
+  azure_rm_virtualnetwork:
+    name: "{{ az_net_name }}"
+    resource_group: "{{ az_rg_name }}"
+    address_prefixes_cidr:
+      - "{{ az_net_cidr }}"
+
+- name: Create a subnet
+  azure_rm_subnet:
+    name: "{{ az_subnet_name }}"
+    virtual_network_name: "{{ az_net_name }}"
+    resource_group:       "{{ az_rg_name }}"
+    address_prefix_cidr:  "{{ az_net_cidr }}"
+
+- name: Create security group
+  azure_rm_securitygroup:
+    resource_group: "{{ az_rg_name }}"
+    name:  "{{ az_sec_group }}"
+    rules: "{{ az_sec_groups }}"
+
+- name: Create a public ip address
+  azure_rm_publicipaddress:
+    resource_group: "{{ az_rg_name }}"
+    name: "{{ az_pub_ip_name }}"
+    allocation_method: Static
+
+- name: Create network interface
+  azure_rm_networkinterface:
+    name:                   "{{ az_nic_name }}"
+    resource_group:         "{{ az_rg_name }}"
+    virtual_network_name:   "{{ az_net_name }}"
+    subnet_name:            "{{ az_subnet_name }}"
+    private_ip_address:     "{{ az_private_ip }}"
+    public_ip_address_name: "{{ az_pub_ip_name }}"
+    security_group_name:    "{{ az_sec_group }}"
+
+- name: Create VM
+  azure_rm_virtualmachine:
+    resource_group:     "{{ az_rg_name }}"
+    name:               "{{ az_vm_name }}"
+    vm_size:            "{{ az_vm_size }}"
+    managed_disk_type:  "{{ az_managed_disk_type }}"
+    network_interfaces: "{{ az_nic_name }}"
+    admin_username:     "{{ az_admin_username }}"
+    ssh_password_enabled: false
+    ssh_public_keys:
+      - path: "/home/{{ az_admin_username }}/.ssh/authorized_keys"
+        key_data: "{{ az_ssh_public_key }}"
+    image: "{{ az_vm_image }}"
+  register: vmresult
+
+- set_fact:
+    vm_public_ip: "{{ vmresult.ansible_facts.azure_vm.properties.networkProfile.networkInterfaces[0].properties.ipConfigurations[0].properties.publicIPAddress.properties.ipAddress }}"
+
+- name: Add VM to inventory
+  add_host:
+    hostname: "dbserver"
+    ansible_host: "{{ vm_public_ip }}"
+    groupname: azure_vms

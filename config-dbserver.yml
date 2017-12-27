@@ -1,0 +1,44 @@
+- name: Create VM for dbserver
+  hosts: dbserver
+  gather_facts: false
+  roles:
+    - role: azurevm
+      delegate_to: localhost
+  tags: [vm]
+
+# The purpose of this "Get VM info" play is to add Azure VM IP to inventory even if
+# create VM play would not have been run. This saves time when it is not always
+# necessary to run Create-VM play.
+- name: Get VM info
+  hosts: dbserver
+  gather_facts: false
+  tasks:
+    - azure_rm_publicipaddress_facts:
+        resource_group: "{{ az_rg_name }}"
+        name: "{{ az_pub_ip_name }}"
+      delegate_to: localhost
+
+    - debug: var=azure_publicipaddresses
+
+    - name: Add VM to inventory
+      add_host:
+        hostname: "dbserver"
+        ansible_host: "{{ azure_publicipaddresses[0].properties.ipAddress }}"
+        groupname: azure_vms
+      changed_when: false
+
+  tags: [conf,influxdb,grafana]
+
+- name: Configure dbserver
+  hosts: dbserver
+  become: yes
+  pre_tasks:
+  # Disabling SELinux makes it faster to install other stuff as with SELinux enabled
+  # semodule process is using lots of CPU time
+    - name: Disable SELinux
+      selinux:
+        state: disabled
+  roles:
+    - role: geerlingguy.docker
+    - role: tempserver
+  tags: [conf]
