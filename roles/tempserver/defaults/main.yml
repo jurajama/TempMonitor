@@ -35,3 +35,15 @@ grafana_dashboards:
         type:     "datasource"
         value:    "raspitemp"
     overwrite: true
+
+# Grafana non-admin users
+grafana_users:
+  - name:     "user1"
+    email:    "user1@test.com"
+    login:    "user1"
+    password: "secret"
+
+  - name:     "user2"
+    email:    "user2@test.com"
+    login:    "user2"
+    password: "secret"

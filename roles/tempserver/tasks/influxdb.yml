@@ -58,4 +58,3 @@
 - name: Grant access rights to database
   command: "docker exec influxdb_database influx -username {{ influxdb_admin_username }} -password {{ influxdb_admin_password }} -execute \"GRANT ALL ON {{ influx_db_name }} to {{ influxdb_raspi_username }}\""
 
-# TODO: Create influxdb read-only users

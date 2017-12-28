@@ -1,0 +1,29 @@
+# API reference: http://docs.grafana.org/http_api/admin/#global-users
+#                http://docs.grafana.org/http_api/user/
+
+- name: Get existing grafana users
+  uri:
+    url:              "{{ grafana_api_url }}/api/users"
+    force_basic_auth: true
+    user:             "{{ grafana_admin_user }}"
+    password:         "{{ grafana_admin_password }}"
+    return_content:   true
+  register: _grafana_users_output
+
+- name: Create grafana users
+  register: _grafana_users_create_output
+  failed_when: "'User created' not in _grafana_users_create_output|to_json"
+  uri:
+    url:                  "{{ grafana_api_url }}/api/admin/users"
+    method:               POST
+    body:                 '{{ item|to_json }}'
+    force_basic_auth:     true
+    user:                 "{{ grafana_admin_user }}"
+    password:             "{{ grafana_admin_password }}"
+    status_code:          200
+    headers:
+      Content-Type: application/json
+  with_items: "{{ grafana_users }}"
+  when: item.name not in _grafana_users_output.json|map(attribute='name')|list
+
+
