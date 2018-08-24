@@ -1,0 +1,28 @@
+---
+# SSH public key injected to created Linux VM
+az_ssh_public_key: "ssh-rsa xxxxyyyyyzzzzz"
+
+# User account created in Linux VM
+az_admin_username: yourusername
+
+# Admin password of influxdb
+influxdb_admin_password: influxdb123
+
+# Username and password that Raspberry script uses to send data to InfluxDB
+influxdb_raspi_username: raspi
+influxdb_raspi_password: raspi123
+
+# Admin password for Grafana GUI
+grafana_admin_password: grafana123
+
+# Users created in Grafana
+grafana_users:
+  - name:     "teppo"
+    email:    "teppo@test.com"
+    login:    "teppo"
+    password: "teppo123"
+
+  - name:     "kalle"
+    email:    "kalle@test.com"
+    login:    "kalle"
+    password: "kalle123"

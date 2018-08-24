@@ -2,8 +2,14 @@ from influxdb import InfluxDBClient
 import Adafruit_DHT
 import datetime
 
+# This script reads temperature data from temperature sensor and
+# sends data to InfluxDB in cloud
+# See driver installation instructions in:
+# https://learn.adafruit.com/dht-humidity-sensing-on-raspberry-pi-with-gdocs-logging/software-install-updated
+
+
 # Primary server
-client = InfluxDBClient('Add-DB-IP-here', 8086, 'raspi', 'secret', 'raspidata', timeout=5)
+client = InfluxDBClient('Add-DB-IP-here', 8086, 'raspi', 'raspi123', 'raspidata', timeout=5)
 
 sensor = 22  # sensor model
 pin    = 4   # GPIO pin#4
