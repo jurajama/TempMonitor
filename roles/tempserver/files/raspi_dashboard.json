@@ -118,7 +118,7 @@
             }
           ],
           "thresholds": [],
-          "timeFrom": "12 h",
+          "timeFrom": null,
           "timeShift": null,
           "title": "Temperature",
           "tooltip": {
@@ -139,8 +139,8 @@
               "format": "celsius",
               "label": "",
               "logBase": 1,
-              "max": "24",
-              "min": "10",
+              "max": "30",
+              "min": "6",
               "show": true
             },
             {
@@ -257,8 +257,8 @@
               "format": "short",
               "label": "%",
               "logBase": 1,
-              "max": "70",
-              "min": "30",
+              "max": "90",
+              "min": "10",
               "show": true
             },
             {
@@ -287,7 +287,7 @@
     "list": []
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-2d",
     "to": "now"
   },
   "timepicker": {
@@ -317,5 +317,5 @@
   },
   "timezone": "",
   "title": "Temperature and Humidity",
-  "version": 11
+  "version": 16
 }
