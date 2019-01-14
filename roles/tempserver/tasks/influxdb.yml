@@ -2,9 +2,10 @@
 - name: Install EPEL repository
   yum:
     name: epel-release
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Install pip
-  yum:
+  package:
     name: python-pip
 
 - name: Install python packages
