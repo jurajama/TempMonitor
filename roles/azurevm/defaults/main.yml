@@ -10,7 +10,7 @@ az_private_ip:  10.20.30.10
 az_vm_name:     testvm001
 az_vm_size:     Standard_A0
 az_managed_disk_type: Standard_LRS
-az_admin_username: admin
+az_admin_username: adminuser
 
 # You must override this with your real SSH public key:
 az_ssh_public_key: "ssh-rsa DummyKeyContent"

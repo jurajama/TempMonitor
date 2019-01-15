@@ -1,2 +1,2 @@
-dbserver ansible_user=admin
+dbserver ansible_user=adminuser
 raspi
