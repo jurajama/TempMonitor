@@ -30,7 +30,7 @@
   register: _manala_grafana_datasources_output
   retries: 3
   delay: 5
-  until: _manala_grafana_datasources_output | succeeded
+  until: _manala_grafana_datasources_output is succeeded
 
 # Create non existing datasources
 - name: datasources > Create datasources

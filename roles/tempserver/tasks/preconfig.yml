@@ -1,0 +1,35 @@
+---
+- block:
+  - name: Install EPEL repository
+    yum:
+      name: epel-release
+
+  - name: Install libselinux-python
+    package:
+      name: python-selinux
+
+  # Disabling SELinux makes it faster to install other stuff as with SELinux enabled
+  # semodule process is using lots of CPU time
+  - name: Disable SELinux permanently
+    selinux:
+      state: disabled
+
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- block:
+  - name: Install easy_install
+    package:
+      name: python-setuptools
+
+  - name: Install pip
+    easy_install:
+      name: pip
+      state: latest
+
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+# docker-py is needed for managing containers with Ansible
+- name: Install docker-py
+  pip:
+    name: docker-py
+    state: latest

@@ -33,11 +33,10 @@
   hosts: dbserver
   become: yes
   pre_tasks:
-  # Disabling SELinux makes it faster to install other stuff as with SELinux enabled
-  # semodule process is using lots of CPU time
-    - name: Disable SELinux
-      selinux:
-        state: disabled
+    - name: Preconfig
+      include_role:
+        name: tempserver
+        tasks_from: preconfig.yml
   roles:
     - role: geerlingguy.docker
     - role: tempserver

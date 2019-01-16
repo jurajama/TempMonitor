@@ -1,13 +1,4 @@
 ---
-- name: Install EPEL repository
-  yum:
-    name: epel-release
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
-
-- name: Install pip
-  package:
-    name: python-pip
-
 - name: Install python packages
   pip:
     name: influxdb
@@ -43,7 +34,7 @@
 - name: Create influxdb admin user
   command: "docker exec influxdb_database influx -execute \"CREATE USER {{ influxdb_admin_username }} WITH PASSWORD '{{ influxdb_admin_password }}' WITH ALL PRIVILEGES\""
   register: result
-  failed_when: result|failed and not 'unable to parse authentication credentials' in result.stdout
+  failed_when: result is failed and not 'unable to parse authentication credentials' in result.stdout
 
 - name: Create database
   influxdb_database:

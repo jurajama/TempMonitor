@@ -25,8 +25,17 @@ az_sec_groups:
     priority: 101
     direction: Inbound
 
-az_vm_image:
+centos_image:
   offer: CentOS
   publisher: OpenLogic
   sku: '7.5'
   version: latest
+
+debian_image:
+  offer: Debian
+  publisher: credativ
+  sku: '8'
+  version: latest
+
+# This parameter is used to choose the used image of above alternatives
+az_vm_image: "{{ centos_image }}"
