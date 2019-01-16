@@ -1,9 +1,9 @@
 ---
 # SSH public key injected to created Linux VM
-az_ssh_public_key: "ssh-rsa xxxxyyyyyzzzzz"
+az_ssh_public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCyersZFNhZVNLfLEu5gbf85tH2DSsh38yWHU44BD2l6avbSRh2zX16hMrY97+trC0hhkv/vTT+bjCWiCyUKq50oumFGw3nJV3+H2cid3Np+u58MZq85t3XwgYzgjVHWGLUVtaDjZg/uuuX+EZ5DOAICo7HoG4XeQxvVdP189agHki61Ilt9f8Q0FsJRX2jCC1fvAIjhO+8FouxAy8u7G/a9fxF2bTGMIqtuo7KhTk8aD2IedhsNeAuaZzLlCkctzZQEJbDOBQQblh9jOEhE3XDnqWVwxuSVbbV1G9GF1VSDevBWAjoWzDdBQ7LVJG1O1L6ABX2+Cf6DznwW8LJnxe/"
 
 # User account created in Linux VM
-az_admin_username: yourusername
+#az_admin_username: jurajama
 
 # Admin password of influxdb
 influxdb_admin_password: influxdb123
