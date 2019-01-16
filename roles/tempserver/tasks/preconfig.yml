@@ -4,9 +4,11 @@
     yum:
       name: epel-release
 
-  - name: Install libselinux-python
-    package:
-      name: python-selinux
+  - name: Install packages
+    yum:
+      name:
+       - python-pip
+       - libselinux-python
 
   # Disabling SELinux makes it faster to install other stuff as with SELinux enabled
   # semodule process is using lots of CPU time
@@ -17,9 +19,14 @@
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - block:
-  - name: Install easy_install
+  # This often fails after VM creation, therefore doing retries
+  - name: Install python setuptools
     package:
       name: python-setuptools
+    register: result
+    until: result is succeeded
+    retries: 10
+    delay: 5
 
   - name: Install pip
     easy_install:
