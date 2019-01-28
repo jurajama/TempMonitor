@@ -11,5 +11,4 @@
         tasks_from: raspi_preconfig.yml
   roles:
     - role: tempserver
-      grafana_image: fg2it/grafana-armhf
   tags: [conf]
