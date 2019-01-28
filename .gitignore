@@ -1,2 +1,3 @@
 *.retry
 ext-roles/*
+host_vars/raspi.yml

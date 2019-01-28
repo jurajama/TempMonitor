@@ -1,0 +1,15 @@
+---
+# Note: This does not install Docker on Raspberry automatically
+
+- name: Configure dbserver
+  hosts: raspi
+  become: yes
+  pre_tasks:
+    - name: Preconfig
+      include_role:
+        name: tempserver
+        tasks_from: raspi_preconfig.yml
+  roles:
+    - role: tempserver
+      grafana_image: fg2it/grafana-armhf
+  tags: [conf]

@@ -2,7 +2,7 @@
 - name: Start grafana container
   docker_container:
     name: grafana_gui
-    image: grafana/grafana
+    image: "{{ grafana_image }}"
     restart_policy: always
     env:
       GF_SECURITY_ADMIN_PASSWORD: "{{ grafana_admin_password }}"

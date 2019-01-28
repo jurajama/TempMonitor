@@ -1,4 +1,10 @@
 ---
+# Docker image for influxdb
+influxdb_image: influxdb
+
+# Docker image for grafana
+grafana_image: grafana/grafana
+
 # Name of InfluxDB database where to store the data
 influx_db_name: raspidata
 

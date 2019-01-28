@@ -1,0 +1,6 @@
+---
+# docker-py is needed for managing containers with Ansible
+- name: Install docker-py
+  pip:
+    name: docker-py
+    state: latest

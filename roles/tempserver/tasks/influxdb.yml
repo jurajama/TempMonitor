@@ -20,7 +20,7 @@
 - name: Start influxdb container
   docker_container:
     name: influxdb_database
-    image: influxdb
+    image: "{{ influxdb_image }}"
     command: "-config /etc/influxdb/influxdb.conf"
     restart_policy: always
     volumes:
@@ -28,25 +28,38 @@
       - "/opt/influxdb/config/influxdb.conf:/etc/influxdb/influxdb.conf:ro"
     ports:
       - "{{ influxdb_tcp_port }}:{{ influxdb_tcp_port }}"
+    env:
+      INFLUXDB_HTTP_AUTH_ENABLED: true
+      INFLUXDB_ADMIN_USER: "{{ influxdb_admin_username }}"
+      INFLUXDB_ADMIN_PASSWORD: "{{ influxdb_admin_password }}"
+      INFLUXDB_DB: "{{ influx_db_name }}"
+      INFLUXDB_USER: "{{ influxdb_raspi_username }}"
+      INFLUXDB_USER_PASSWORD: "{{ influxdb_raspi_password }}"
+  register: start_result
 
+#- name: Wait for influxdb to initialize
+#  pause:
+#    seconds: 15
+#  when: start_result is changed
+#
 # After the admin user has been created the following logins must always use that user
 # and running this command fails.
-- name: Create influxdb admin user
-  command: "docker exec influxdb_database influx -execute \"CREATE USER {{ influxdb_admin_username }} WITH PASSWORD '{{ influxdb_admin_password }}' WITH ALL PRIVILEGES\""
-  register: result
-  failed_when: result is failed and not 'unable to parse authentication credentials' in result.stdout
+#- name: Create influxdb admin user
+#  command: "docker exec influxdb_database influx -execute \"CREATE USER {{ influxdb_admin_username }} WITH PASSWORD '{{ influxdb_admin_password }}' WITH ALL PRIVILEGES\""
+#  register: result
+#  failed_when: result is failed and not 'unable to parse authentication credentials' in result.stdout
 
-- name: Create database
-  influxdb_database:
-    hostname: "{{ ansible_host }}"
-    database_name: "{{ influx_db_name }}"
-    username: "{{ influxdb_admin_username }}"
-    password: "{{ influxdb_admin_password }}"
+#- name: Create database
+#  influxdb_database:
+#    hostname: "{{ ansible_host }}"
+#    database_name: "{{ influx_db_name }}"
+#    username: "{{ influxdb_admin_username }}"
+#    password: "{{ influxdb_admin_password }}"
 
 # This command does not fail even if user already exists
-- name: Create influxdb raspi user
-  command: "docker exec influxdb_database influx -username {{ influxdb_admin_username }} -password {{ influxdb_admin_password }} -execute \"CREATE USER {{ influxdb_raspi_username }} WITH PASSWORD '{{ influxdb_raspi_password }}'\""
+#- name: Create influxdb raspi user
+#  command: "docker exec influxdb_database influx -username {{ influxdb_admin_username }} -password {{ influxdb_admin_password }} -execute \"CREATE USER {{ influxdb_raspi_username }} WITH PASSWORD '{{ influxdb_raspi_password }}'\""
 
-- name: Grant access rights to database
-  command: "docker exec influxdb_database influx -username {{ influxdb_admin_username }} -password {{ influxdb_admin_password }} -execute \"GRANT ALL ON {{ influx_db_name }} to {{ influxdb_raspi_username }}\""
+#- name: Grant access rights to database
+#  command: "docker exec influxdb_database influx -username {{ influxdb_admin_username }} -password {{ influxdb_admin_password }} -execute \"GRANT ALL ON {{ influx_db_name }} to {{ influxdb_raspi_username }}\""
 

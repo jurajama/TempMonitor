@@ -1,20 +1,4 @@
 ---
-- name: Enable IP forwarding
-  sysctl:
-    name: net.ipv4.ip_forward
-    value: 1
-
-# Docker and firewalld mess in CentOS 7, so let's disable it.
-# https://sanenthusiast.com/docker-and-firewalld-mess-in-centos-7/
-# Bug report: https://github.com/docker/docker/issues/16137
-- name: Disable firewalld
-  systemd:
-    name: firewalld
-    state: stopped
-    enabled: no
-  register: result
-  failed_when: result is failed and not 'Could not find the requested service' in result.msg
-
 - import_tasks: influxdb.yml
   tags: [influxdb]
 

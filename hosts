@@ -1,2 +1,2 @@
 dbserver ansible_user=adminuser
-raspi
+raspi ansible_user=pi ansible_host=192.168.1.92
