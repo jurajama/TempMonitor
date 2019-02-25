@@ -28,6 +28,9 @@ str_timestamp = timestamp.isoformat("T") + "Z"
 json_temp = [
     {
         "measurement": "temps",
+        "tags": {
+            "sensorId": "1"
+        },
         "time": str_timestamp,
         "fields": {
            "temperature": temperature,
