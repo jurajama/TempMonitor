@@ -32,17 +32,15 @@ Install python module "azure":
 sudo pip install ansible[azure]
 ```
 
-Update version of msrestazure package as otherwise you may face certificate verification failure:
-```
-sudo pip install msrestazure -U
-```
+Alternatively you can use ready-made container https://github.com/jurajama/OS_ansible_client
+where the required tools are installed by default.
 
 Make sure that your private key is loaded in SSH-agent and agent forwarding is enabled in your SSH session.
 
 ## Deployment steps
 - Clone git repo:
 ```
-git clone https://github.com/jurajama/TempMonitor`
+git clone https://github.com/jurajama/TempMonitor
 cd TempMonitor
 ```
 
@@ -63,7 +61,7 @@ export AZURE_SECRET=xxxxxxxx
 export AZURE_TENANT=xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 ```
 
-See more information in https://docs.ansible.com/ansible/2.6/scenario_guides/guide_azure.html
+See more information in https://docs.ansible.com/ansible/2.9/scenario_guides/guide_azure.html
 
 - Run playbook
 ```

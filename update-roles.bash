@@ -6,4 +6,5 @@
 ansible-galaxy install -r requirements.yml \
   -p ext-roles \
   --force \
-  --verbose
+  --verbose \
+  --no-deps
